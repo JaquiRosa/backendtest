@@ -4,116 +4,184 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Teste API Tasks e Users</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background-color: hsl(190, 62%, 69%);
+        font-family: sans-serif;
+        padding: 2rem;
+        color: #000;
+      }
+
+      h1 {
+        font-size: 1.6rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+      }
+
+      h2 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+      }
+
+      .section {
+        margin-bottom: 3rem;
+      }
+
+      .top-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .bottom-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+      }
+
+      .card {
+        background: #fff;
+        border-radius: 10px;
+        padding: 1.25rem;
+      }
+
+      input {
+        display: block;
+        width: 100%;
+        padding: 0.45rem 0.6rem;
+        margin-bottom: 0.65rem;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 0.875rem;
+      }
+
+      button {
+        background-color: hsl(190, 62%, 35%);
+        color: #fff;
+        border: none;
+        padding: 0.45rem 1.1rem;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.875rem;
+      }
+
+      button:hover {
+        background-color: hsl(190, 62%, 25%);
+      }
+
+      pre#result {
+        background: #f4f4f4;
+        border-radius: 6px;
+        padding: 0.75rem;
+        font-size: 0.8rem;
+        white-space: pre-wrap;
+        word-break: break-all;
+        min-height: 120px;
+        height: 100%;
+      }
+
+      /* Users section */
+      .users-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+      }
+    </style>
   </head>
   <body>
-    <h1>Tasks</h1>
 
-    <h2>Criar tarefa</h2>
+    <!-- TASKS -->
+    <div class="section">
+      <h1>Tasks</h1>
 
-    <input id="title" type="text" placeholder="Título" />
-    <br /><br />
+      <div class="top-row">
+        <div class="card">
+          <h2>Criar tarefa</h2>
+          <input id="title" type="text" placeholder="Título" />
+          <input id="description" type="text" placeholder="Descrição" />
+          <button onclick="createTask()">Criar</button>
+        </div>
 
-    <input id="description" type="text" placeholder="Descrição" />
-    <br /><br />
+        <div class="card">
+          <h2>Resultado</h2>
+          <pre id="result"></pre>
+        </div>
+      </div>
 
-    <button onclick="createTask()">Criar</button>
+      <div class="bottom-row">
+        <div class="card">
+          <h2>Listar todas as tarefas</h2>
+          <button onclick="listTasks()">Listar</button>
+        </div>
 
-    <hr />
+        <div class="card">
+          <h2>Buscar tarefa</h2>
+          <input id="taskId" placeholder="ID da tarefa" />
+          <button onclick="getTask()">Buscar</button>
+        </div>
 
-    <h2>Listar todas as tarefas</h2>
+        <div class="card">
+          <h2>Editar tarefa</h2>
+          <input id="editId" placeholder="ID da tarefa" />
+          <input id="editTitle" type="text" placeholder="Novo título" />
+          <input id="editDescription" type="text" placeholder="Nova descrição" />
+          <button onclick="updateTask()">Salvar</button>
+        </div>
 
-    <button onclick="listTasks()">Listar</button>
+        <div class="card">
+          <h2>Deletar tarefa</h2>
+          <input id="deleteId" placeholder="ID da tarefa" />
+          <button onclick="deleteTask()">Deletar</button>
+        </div>
+      </div>
+    </div>
 
-    <hr />
+    <!-- USERS -->
+    <div class="section">
+      <h1>Users</h1>
 
-    <h2>Buscar tarefa</h2>
+      <div class="users-grid">
+        <div class="card">
+          <h2>Criar usuário</h2>
+          <input id="userEmail" type="email" placeholder="Email" />
+          <input id="userPassword" type="password" placeholder="Senha" />
+          <button onclick="createUser()">Criar usuário</button>
+        </div>
 
-    <input id="taskId" placeholder="ID da tarefa" />
+        <div class="card">
+          <h2>Listar todos os usuários</h2>
+          <button onclick="listUsers()">Listar usuários</button>
+        </div>
 
-    <button onclick="getTask()">Buscar</button>
+        <div class="card">
+          <h2>Buscar usuário</h2>
+          <input id="userId" placeholder="ID do usuário" />
+          <button onclick="getUser()">Buscar usuário</button>
+        </div>
 
-    <hr />
+        <div class="card">
+          <h2>Editar usuário</h2>
+          <input id="editUserId" placeholder="ID do usuário" />
+          <input id="editUserEmail" type="email" placeholder="Novo email" />
+          <input id="editUserPassword" type="password" placeholder="Nova senha" />
+          <button onclick="updateUser()">Salvar usuário</button>
+        </div>
 
-    <h2>Editar tarefa</h2>
-
-    <input id="editId" placeholder="ID da tarefa" />
-    <br /><br />
-
-    <input id="editTitle" type="text" placeholder="Novo título" />
-    <br /><br />
-
-    <input id="editDescription" type="text" placeholder="Nova descrição" />
-    <br /><br />
-
-    <button onclick="updateTask()">Salvar</button>
-
-    <hr />
-
-    <h2>Deletar tarefa</h2>
-
-    <input id="deleteId" placeholder="ID da tarefa" />
-    <br /><br />
-
-    <button onclick="deleteTask()">Deletar</button>
-
-    <hr />
-
-    <h1>Users</h1>
-
-    <h2>Criar usuário</h2>
-
-    <input id="userEmail" type="email" placeholder="Email" />
-    <br /><br />
-
-    <input id="userPassword" type="password" placeholder="Senha" />
-    <br /><br />
-
-    <button onclick="createUser()">Criar usuário</button>
-
-    <hr />
-
-    <h2>Listar todos os usuários</h2>
-
-    <button onclick="listUsers()">Listar usuários</button>
-
-    <hr />
-
-    <h2>Buscar usuário</h2>
-
-    <input id="userId" placeholder="ID do usuário" />
-    <br /><br />
-
-    <button onclick="getUser()">Buscar usuário</button>
-
-    <hr />
-
-    <h2>Editar usuário</h2>
-
-    <input id="editUserId" placeholder="ID do usuário" />
-    <br /><br />
-
-    <input id="editUserEmail" type="email" placeholder="Novo email" />
-    <br /><br />
-
-    <input id="editUserPassword" type="password" placeholder="Nova senha" />
-    <br /><br />
-
-    <button onclick="updateUser()">Salvar usuário</button>
-
-    <hr />
-
-    <h2>Deletar usuário</h2>
-
-    <input id="deleteUserId" placeholder="ID do usuário" />
-    <br /><br />
-
-    <button onclick="deleteUser()">Deletar usuário</button>
-
-    <hr />
-
-    <h2>Resultado</h2>
-
-    <pre id="result"></pre>
+        <div class="card">
+          <h2>Deletar usuário</h2>
+          <input id="deleteUserId" placeholder="ID do usuário" />
+          <button onclick="deleteUser()">Deletar usuário</button>
+        </div>
+      </div>
+    </div>
 
     <script>
       const API_URL = "http://localhost:3000";
@@ -121,26 +189,14 @@
       async function createTask() {
         const title = document.getElementById("title").value;
         const description = document.getElementById("description").value;
-
         try {
           const response = await fetch(`${API_URL}/tasks`, {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              title,
-              description,
-            }),
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ title, description }),
           });
-
           const data = await response.json();
-
-          document.getElementById("result").textContent = JSON.stringify(
-            data,
-            null,
-            2,
-          );
+          document.getElementById("result").textContent = JSON.stringify(data, null, 2);
         } catch (error) {
           console.error(error);
         }
@@ -150,12 +206,7 @@
         try {
           const response = await fetch(`${API_URL}/tasks`);
           const data = await response.json();
-
-          document.getElementById("result").textContent = JSON.stringify(
-            data,
-            null,
-            2,
-          );
+          document.getElementById("result").textContent = JSON.stringify(data, null, 2);
         } catch (error) {
           console.error(error);
         }
@@ -163,16 +214,10 @@
 
       async function getTask() {
         const id = document.getElementById("taskId").value;
-
         try {
           const response = await fetch(`${API_URL}/tasks/${id}`);
           const data = await response.json();
-
-          document.getElementById("result").textContent = JSON.stringify(
-            data,
-            null,
-            2,
-          );
+          document.getElementById("result").textContent = JSON.stringify(data, null, 2);
         } catch (error) {
           console.error(error);
         }
@@ -182,29 +227,16 @@
         const id = document.getElementById("editId").value;
         const title = document.getElementById("editTitle").value;
         const description = document.getElementById("editDescription").value;
-
         try {
           const body = { title };
-
-          if (description) {
-            body.description = description;
-          }
-
+          if (description) body.description = description;
           const response = await fetch(`${API_URL}/tasks/${id}`, {
             method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(body),
           });
-
           const data = await response.json();
-
-          document.getElementById("result").textContent = JSON.stringify(
-            data,
-            null,
-            2,
-          );
+          document.getElementById("result").textContent = JSON.stringify(data, null, 2);
         } catch (error) {
           console.error(error);
         }
@@ -212,23 +244,13 @@
 
       async function deleteTask() {
         const id = document.getElementById("deleteId").value;
-
         try {
-          const response = await fetch(`${API_URL}/tasks/${id}`, {
-            method: "DELETE",
-          });
-
+          const response = await fetch(`${API_URL}/tasks/${id}`, { method: "DELETE" });
           if (response.status === 204) {
-            document.getElementById("result").textContent =
-              "Tarefa deletada com sucesso.";
+            document.getElementById("result").textContent = "Tarefa deletada com sucesso.";
           } else {
             const data = await response.json();
-
-            document.getElementById("result").textContent = JSON.stringify(
-              data,
-              null,
-              2,
-            );
+            document.getElementById("result").textContent = JSON.stringify(data, null, 2);
           }
         } catch (error) {
           console.error(error);
@@ -238,26 +260,14 @@
       async function createUser() {
         const email = document.getElementById("userEmail").value;
         const password = document.getElementById("userPassword").value;
-
         try {
           const response = await fetch(`${API_URL}/users`, {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              email,
-              password,
-            }),
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }),
           });
-
           const data = await response.json();
-
-          document.getElementById("result").textContent = JSON.stringify(
-            data,
-            null,
-            2,
-          );
+          document.getElementById("result").textContent = JSON.stringify(data, null, 2);
         } catch (error) {
           console.error(error);
         }
@@ -267,12 +277,7 @@
         try {
           const response = await fetch(`${API_URL}/users`);
           const data = await response.json();
-
-          document.getElementById("result").textContent = JSON.stringify(
-            data,
-            null,
-            2,
-          );
+          document.getElementById("result").textContent = JSON.stringify(data, null, 2);
         } catch (error) {
           console.error(error);
         }
@@ -280,16 +285,10 @@
 
       async function getUser() {
         const id = document.getElementById("userId").value;
-
         try {
           const response = await fetch(`${API_URL}/users/${id}`);
           const data = await response.json();
-
-          document.getElementById("result").textContent = JSON.stringify(
-            data,
-            null,
-            2,
-          );
+          document.getElementById("result").textContent = JSON.stringify(data, null, 2);
         } catch (error) {
           console.error(error);
         }
@@ -299,26 +298,14 @@
         const id = document.getElementById("editUserId").value;
         const email = document.getElementById("editUserEmail").value;
         const password = document.getElementById("editUserPassword").value;
-
         try {
           const response = await fetch(`${API_URL}/users/${id}`, {
             method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              email,
-              password,
-            }),
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }),
           });
-
           const data = await response.json();
-
-          document.getElementById("result").textContent = JSON.stringify(
-            data,
-            null,
-            2,
-          );
+          document.getElementById("result").textContent = JSON.stringify(data, null, 2);
         } catch (error) {
           console.error(error);
         }
@@ -326,23 +313,13 @@
 
       async function deleteUser() {
         const id = document.getElementById("deleteUserId").value;
-
         try {
-          const response = await fetch(`${API_URL}/users/${id}`, {
-            method: "DELETE",
-          });
-
+          const response = await fetch(`${API_URL}/users/${id}`, { method: "DELETE" });
           if (response.status === 204) {
-            document.getElementById("result").textContent =
-              "Usuário deletado com sucesso.";
+            document.getElementById("result").textContent = "Usuário deletado com sucesso.";
           } else {
             const data = await response.json();
-
-            document.getElementById("result").textContent = JSON.stringify(
-              data,
-              null,
-              2,
-            );
+            document.getElementById("result").textContent = JSON.stringify(data, null, 2);
           }
         } catch (error) {
           console.error(error);
