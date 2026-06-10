@@ -3,6 +3,7 @@ const sequelize = require("./database/sequelize");
 const Task = require("./database/models/task");
 const User = require("./database/models/user");
 const cors = require("cors");
+const bcrypt = require("bcrypt")
 // Importa os models antes do sync
 require("./database/models/task");
 require("./database/models/user");
@@ -14,6 +15,7 @@ app.use(cors()); // libera todas as origens
 app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
+
 
 function validatePassword(password) {
   const minMaxLength = /^.{6,20}$/;
@@ -70,10 +72,12 @@ app.post("/users", async (req, res) => {
         message: passwordError,
       });
     }
+     
+    const hashedPassword = await bcrypt.hash(password, 10)
 
     const user = await User.create({
       email,
-      password,
+      password: hashedPassword,
     });
 
     return res.status(201).json({
@@ -166,6 +170,7 @@ app.put("/users/:id", async (req, res) => {
     }
 
     user.email = email;
+    const hashedPassword = await bcrypt.hash(password, 10);
     user.password = password;
 
     await user.save();

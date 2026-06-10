@@ -112,7 +112,7 @@
       <div class="top-row">
         <div class="card">
           <h2>Criar tarefa</h2>
-          <input id="title" type="text" placeholder="Título" />
+          <input id="title" type="text" placeholder="Título" maxlength="255" />
           <input id="description" type="text" placeholder="Descrição" />
           <button onclick="createTask()">Criar</button>
         </div>
@@ -207,6 +207,7 @@
       async function createTask() {
         const title = document.getElementById("title").value;
         const description = document.getElementById("description").value;
+
         try {
           const response = await fetch(`${API_URL}/tasks`, {
             method: "POST",
