@@ -15,7 +15,35 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json());
+function validatePassword(password) {
+  const minMaxLength = /^.{6,20}$/;
+  const hasLowerCase = /[a-z]/;
+  const hasUpperCase = /[A-Z]/;
+  const hasNumber = /\d/;
+  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/;
+
+  if (!minMaxLength.test(password)) {
+    return "Password must be between 6 and 20 characters";
+  }
+
+  if (!hasLowerCase.test(password)) {
+    return "Password must contain at least one lowercase letter";
+  }
+
+  if (!hasUpperCase.test(password)) {
+    return "Password must contain at least one uppercase letter";
+  }
+
+  if (!hasNumber.test(password)) {
+    return "Password must contain at least one number";
+  }
+
+  if (!hasSpecialChar.test(password)) {
+    return "Password must contain at least one special character";
+  }
+
+  return null;
+}
 
 //--------------------------USERS--------------------
 
@@ -34,12 +62,24 @@ app.post("/users", async (req, res) => {
         message: "Password is required",
       });
     }
+
+    const passwordError = validatePassword(password);
+
+    if (passwordError) {
+      return res.status(400).json({
+        message: passwordError,
+      });
+    }
+
     const user = await User.create({
       email,
       password,
     });
 
-    return res.status(201).json(user);
+    return res.status(201).json({
+      id: user.id,
+      email: user.email,
+    });
   } catch (error) {
     console.error("Error creating user:", error);
 
@@ -96,39 +136,66 @@ app.put("/users/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const { email, password } = req.body;
+
     const user = await User.findByPk(id);
+
     if (!user) {
       return res.status(404).json({
         message: "User Not Found",
       });
     }
+
     if (!email) {
-        return res.status(400).json({ message: "Email is required" });
+      return res.status(400).json({
+        message: "Email is required",
+      });
     }
+
+    if (!password) {
+      return res.status(400).json({
+        message: "Password is required",
+      });
+    }
+
+    const passwordError = validatePassword(password);
+
+    if (passwordError) {
+      return res.status(400).json({
+        message: passwordError,
+      });
+    }
+
     user.email = email;
     user.password = password;
-    await user.save();
-    return res.status(200).json(user);
 
+    await user.save();
+
+    return res.status(200).json({
+      id: user.id,
+      email: user.email,
+    });
   } catch (error) {
-    console.error("Error creating user", error);
-    return res.status(500).json({ message: "Internal server error" });
+    console.error("Error updating user", error);
+
+    return res.status(500).json({
+      message: "Internal server error",
+    });
   }
 });
 
-app.delete("/users/:id", async (req, res)=>{
-try {
-    const {id} = req.params;
+app.delete("/users/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
     const user = await User.findByPk(id);
     if (!user) {
-        return res.status(404).json({message: "User not found"});
+      return res.status(404).json({ message: "User not found" });
     }
     await user.destroy();
     return res.status(204).send();
-} catch (error) {
+  } catch (error) {
     console.error("Erro ao deletar usuário", error);
-    return res.status(500).json({ message: "Internal Server Error"});
-}
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
 });
 
 //--------------------- TASKS-------------------

@@ -94,10 +94,17 @@
         grid-template-columns: repeat(3, 1fr);
         gap: 1rem;
       }
+
+      .error-message {
+        color: red;
+        font-size: 0.8rem;
+        margin-top: -0.4rem;
+        margin-bottom: 0.65rem;
+        display: none;
+      }
     </style>
   </head>
   <body>
-
     <!-- TASKS -->
     <div class="section">
       <h1>Tasks</h1>
@@ -132,7 +139,11 @@
           <h2>Editar tarefa</h2>
           <input id="editId" placeholder="ID da tarefa" />
           <input id="editTitle" type="text" placeholder="Novo título" />
-          <input id="editDescription" type="text" placeholder="Nova descrição" />
+          <input
+            id="editDescription"
+            type="text"
+            placeholder="Nova descrição"
+          />
           <button onclick="updateTask()">Salvar</button>
         </div>
 
@@ -153,6 +164,7 @@
           <h2>Criar usuário</h2>
           <input id="userEmail" type="email" placeholder="Email" />
           <input id="userPassword" type="password" placeholder="Senha" />
+          <p id="userPasswordError" class="error-message">erro</p>
           <button onclick="createUser()">Criar usuário</button>
         </div>
 
@@ -171,7 +183,13 @@
           <h2>Editar usuário</h2>
           <input id="editUserId" placeholder="ID do usuário" />
           <input id="editUserEmail" type="email" placeholder="Novo email" />
-          <input id="editUserPassword" type="password" placeholder="Nova senha" />
+          <input
+            id="editUserPassword"
+            type="password"
+            placeholder="Nova senha"
+          />
+
+          <p id="editUserPasswordError" class="error-message"></p>
           <button onclick="updateUser()">Salvar usuário</button>
         </div>
 
@@ -196,7 +214,11 @@
             body: JSON.stringify({ title, description }),
           });
           const data = await response.json();
-          document.getElementById("result").textContent = JSON.stringify(data, null, 2);
+          document.getElementById("result").textContent = JSON.stringify(
+            data,
+            null,
+            2,
+          );
         } catch (error) {
           console.error(error);
         }
@@ -206,7 +228,11 @@
         try {
           const response = await fetch(`${API_URL}/tasks`);
           const data = await response.json();
-          document.getElementById("result").textContent = JSON.stringify(data, null, 2);
+          document.getElementById("result").textContent = JSON.stringify(
+            data,
+            null,
+            2,
+          );
         } catch (error) {
           console.error(error);
         }
@@ -217,7 +243,11 @@
         try {
           const response = await fetch(`${API_URL}/tasks/${id}`);
           const data = await response.json();
-          document.getElementById("result").textContent = JSON.stringify(data, null, 2);
+          document.getElementById("result").textContent = JSON.stringify(
+            data,
+            null,
+            2,
+          );
         } catch (error) {
           console.error(error);
         }
@@ -236,7 +266,11 @@
             body: JSON.stringify(body),
           });
           const data = await response.json();
-          document.getElementById("result").textContent = JSON.stringify(data, null, 2);
+          document.getElementById("result").textContent = JSON.stringify(
+            data,
+            null,
+            2,
+          );
         } catch (error) {
           console.error(error);
         }
@@ -245,12 +279,19 @@
       async function deleteTask() {
         const id = document.getElementById("deleteId").value;
         try {
-          const response = await fetch(`${API_URL}/tasks/${id}`, { method: "DELETE" });
+          const response = await fetch(`${API_URL}/tasks/${id}`, {
+            method: "DELETE",
+          });
           if (response.status === 204) {
-            document.getElementById("result").textContent = "Tarefa deletada com sucesso.";
+            document.getElementById("result").textContent =
+              "Tarefa deletada com sucesso.";
           } else {
             const data = await response.json();
-            document.getElementById("result").textContent = JSON.stringify(data, null, 2);
+            document.getElementById("result").textContent = JSON.stringify(
+              data,
+              null,
+              2,
+            );
           }
         } catch (error) {
           console.error(error);
@@ -260,6 +301,12 @@
       async function createUser() {
         const email = document.getElementById("userEmail").value;
         const password = document.getElementById("userPassword").value;
+        const passwordErrorElement =
+          document.getElementById("userPasswordError");
+
+        passwordErrorElement.textContent = "";
+        passwordErrorElement.style.display = "none";
+
         try {
           const response = await fetch(`${API_URL}/users`, {
             method: "POST",
@@ -267,7 +314,19 @@
             body: JSON.stringify({ email, password }),
           });
           const data = await response.json();
-          document.getElementById("result").textContent = JSON.stringify(data, null, 2);
+
+          if (!response.ok) {
+            passwordErrorElement.textContent = data.message;
+            passwordErrorElement.style.display = "block";
+            document.getElementById("userPassword").style.borderColor = "red";
+            return;
+          }
+
+          document.getElementById("result").textContent = JSON.stringify(
+            data,
+            null,
+            2,
+          );
         } catch (error) {
           console.error(error);
         }
@@ -277,7 +336,11 @@
         try {
           const response = await fetch(`${API_URL}/users`);
           const data = await response.json();
-          document.getElementById("result").textContent = JSON.stringify(data, null, 2);
+          document.getElementById("result").textContent = JSON.stringify(
+            data,
+            null,
+            2,
+          );
         } catch (error) {
           console.error(error);
         }
@@ -288,7 +351,11 @@
         try {
           const response = await fetch(`${API_URL}/users/${id}`);
           const data = await response.json();
-          document.getElementById("result").textContent = JSON.stringify(data, null, 2);
+          document.getElementById("result").textContent = JSON.stringify(
+            data,
+            null,
+            2,
+          );
         } catch (error) {
           console.error(error);
         }
@@ -298,14 +365,33 @@
         const id = document.getElementById("editUserId").value;
         const email = document.getElementById("editUserEmail").value;
         const password = document.getElementById("editUserPassword").value;
+        const passwordErrorElement = document.getElementById(
+          "editUserPasswordError",
+        );
+
+        passwordErrorElement.textContent = "";
+        passwordErrorElement.style.display = "none";
+
         try {
           const response = await fetch(`${API_URL}/users/${id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password }),
           });
+
           const data = await response.json();
-          document.getElementById("result").textContent = JSON.stringify(data, null, 2);
+
+          if (!response.ok) {
+            passwordErrorElement.textContent = data.message;
+            passwordErrorElement.style.display = "block";
+            return;
+          }
+
+          document.getElementById("result").textContent = JSON.stringify(
+            data,
+            null,
+            2,
+          );
         } catch (error) {
           console.error(error);
         }
@@ -314,12 +400,19 @@
       async function deleteUser() {
         const id = document.getElementById("deleteUserId").value;
         try {
-          const response = await fetch(`${API_URL}/users/${id}`, { method: "DELETE" });
+          const response = await fetch(`${API_URL}/users/${id}`, {
+            method: "DELETE",
+          });
           if (response.status === 204) {
-            document.getElementById("result").textContent = "Usuário deletado com sucesso.";
+            document.getElementById("result").textContent =
+              "Usuário deletado com sucesso.";
           } else {
             const data = await response.json();
-            document.getElementById("result").textContent = JSON.stringify(data, null, 2);
+            document.getElementById("result").textContent = JSON.stringify(
+              data,
+              null,
+              2,
+            );
           }
         } catch (error) {
           console.error(error);
