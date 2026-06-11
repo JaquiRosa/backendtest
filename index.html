@@ -105,6 +105,26 @@
     </style>
   </head>
   <body>
+    <!-- LOGIN -->
+    <div class="section">
+      <h1>Login</h1>
+
+      <div class="top-row">
+        <div class="card">
+          <h2>Entrar</h2>
+          <input id="loginEmail" type="email" placeholder="Email" />
+          <input id="loginPassword" type="password" placeholder="Senha" />
+          <p id="loginError" class="error-message">erro</p>
+          <button onclick="login()">Login</button>
+        </div>
+
+        <div class="card">
+          <h2>Resultado</h2>
+          <pre id="loginResult"></pre>
+        </div>
+      </div>
+    </div>
+
     <!-- TASKS -->
     <div class="section">
       <h1>Tasks</h1>
@@ -203,6 +223,38 @@
 
     <script>
       const API_URL = "http://localhost:3000";
+
+      async function login() {
+        const email = document.getElementById("loginEmail").value;
+        const password = document.getElementById("loginPassword").value;
+        const errorElement = document.getElementById("loginError");
+
+        errorElement.textContent = "";
+        errorElement.style.display = "none";
+
+        try {
+          const response = await fetch(`${API_URL}/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }),
+          });
+          const data = await response.json();
+
+          if (!response.ok) {
+            errorElement.textContent = data.message;
+            errorElement.style.display = "block";
+            return;
+          }
+
+          document.getElementById("loginResult").textContent = JSON.stringify(
+            data,
+            null,
+            2,
+          );
+        } catch (error) {
+          console.error(error);
+        }
+      }
 
       async function createTask() {
         const title = document.getElementById("title").value;
