@@ -3,50 +3,19 @@ const sequelize = require("./database/sequelize");
 const Task = require("./database/models/task");
 const User = require("./database/models/user");
 const cors = require("cors");
-const bcrypt = require("bcrypt")
-const jwt = require("jsonwebtoken")
+const validatePassword = require("./Utils/validatePassword");
+const hashPassword = require("./Utils/hashPassword");
+const comparePassword = require("./Utils/comparePassword");
+const generateToken = require("./Utils/generateToken");
+const app = express();
+app.use(cors()); // libera todas as origens
+app.use(express.json());
+
 // Importa os models antes do sync
 require("./database/models/task");
 require("./database/models/user");
 
-const app = express();
-
-app.use(cors()); // libera todas as origens
-
-app.use(express.json());
-
 const PORT = process.env.PORT || 3000;
-
-
-function validatePassword(password) {
-  const minMaxLength = /^.{6,20}$/;
-  const hasLowerCase = /[a-z]/;
-  const hasUpperCase = /[A-Z]/;
-  const hasNumber = /\d/;
-  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/;
-
-  if (!minMaxLength.test(password)) {
-    return "Password must be between 6 and 20 characters";
-  }
-
-  if (!hasLowerCase.test(password)) {
-    return "Password must contain at least one lowercase letter";
-  }
-
-  if (!hasUpperCase.test(password)) {
-    return "Password must contain at least one uppercase letter";
-  }
-
-  if (!hasNumber.test(password)) {
-    return "Password must contain at least one number";
-  }
-
-  if (!hasSpecialChar.test(password)) {
-    return "Password must contain at least one special character";
-  }
-
-  return null;
-}
 
 //--------------------------AUTH--------------------
 
@@ -55,31 +24,38 @@ app.post("/login", async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ message: "Email and password are required" });
+      return res.status(400).json({
+        message: "Email and password are required",
+      });
     }
 
     const user = await User.findOne({ where: { email } });
 
     if (!user) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res.status(401).json({
+        message: "Invalid credentials",
+      });
     }
 
-    const passwordMatch = await bcrypt.compare(password, user.password);
+    const passwordMatch = await comparePassword(password, user.password);
 
     if (!passwordMatch) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res.status(401).json({
+        message: "Invalid credentials",
+      });
     }
 
-    const token = jwt.sign(
-      { id: user.id },
-      process.env.JWT_SECRET,
-      { expiresIn: "1d" }
-    );
+    const token = generateToken(user.id);
 
-    return res.status(200).json({ token });
+    return res.status(200).json({
+      token,
+    });
   } catch (error) {
     console.error("Error on login:", error);
-    return res.status(500).json({ message: "Internal server error" });
+
+    return res.status(500).json({
+      message: "Internal server error",
+    });
   }
 });
 
@@ -108,8 +84,8 @@ app.post("/users", async (req, res) => {
         message: passwordError,
       });
     }
-     
-    const hashedPassword = await bcrypt.hash(password, 10)
+
+    const hashedPassword = await hashPassword(password);
 
     const user = await User.create({
       email,
@@ -206,7 +182,8 @@ app.put("/users/:id", async (req, res) => {
     }
 
     user.email = email;
-    const hashedPassword = await bcrypt.hash(password, 10);
+    
+    const hashedPassword = await hashPassword(password);
     user.password = hashedPassword;
 
     await user.save();
