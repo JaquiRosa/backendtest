@@ -207,7 +207,7 @@ app.put("/users/:id", async (req, res) => {
 
     user.email = email;
     const hashedPassword = await bcrypt.hash(password, 10);
-    user.password = password;
+    user.password = hashedPassword;
 
     await user.save();
 
