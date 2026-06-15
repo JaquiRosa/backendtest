@@ -151,6 +151,8 @@
             return;
           }
 
+          localStorage.setItem("token", data.token);
+
           document.getElementById("loginResult").textContent = JSON.stringify(
             data,
             null,
@@ -160,6 +162,17 @@
           console.error(error);
         }
       }
+
+      window.addEventListener("DOMContentLoaded", () => {
+        const token = localStorage.getItem("token");
+        if (token) {
+          document.getElementById("loginResult").textContent = JSON.stringify(
+            { token },
+            null,
+            2,
+          );
+        }
+      });
 
       async function createTask() {
         const title = document.getElementById("title").value;
