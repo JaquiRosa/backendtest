@@ -10,6 +10,7 @@ const generateToken = require("./Utils/generateToken");
 const app = express();
 app.use(cors()); // libera todas as origens
 app.use(express.json());
+const authenticateToken = require("./utils/authenticateToken")
 
 // Importa os models antes do sync
 require("./database/models/task");
@@ -122,7 +123,7 @@ app.get("/users", async (req, res) => {
   }
 });
 
-app.get("/users/:id", async (req, res) => {
+app.get("/users/:id", authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -148,7 +149,7 @@ app.get("/users/:id", async (req, res) => {
   }
 });
 
-app.put("/users/:id", async (req, res) => {
+app.put("/users/:id", authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
     const { email, password } = req.body;
@@ -201,7 +202,7 @@ app.put("/users/:id", async (req, res) => {
   }
 });
 
-app.delete("/users/:id", async (req, res) => {
+app.delete("/users/:id", authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
     const user = await User.findByPk(id);
