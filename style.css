@@ -88,6 +88,11 @@ pre#result {
   gap: 1rem;
 }
 
+.button-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
 .error-message {
   color: red;
   font-size: 0.8rem;

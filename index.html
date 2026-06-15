@@ -17,7 +17,10 @@
           <input id="loginEmail" type="email" placeholder="Email" />
           <input id="loginPassword" type="password" placeholder="Senha" />
           <p id="loginError" class="error-message">erro</p>
-          <button onclick="login()">Login</button>
+          <div class="button-row">
+            <button onclick="login()">Login</button>
+            <button onclick="logout()">Deslogar</button>
+          </div>
         </div>
 
         <div class="card">
@@ -158,6 +161,11 @@
         } catch (error) {
           console.error(error);
         }
+      }
+
+      function logout() {
+        localStorage.removeItem("token");
+        document.getElementById("loginResult").textContent = "";
       }
 
       window.addEventListener("DOMContentLoaded", () => {
