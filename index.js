@@ -1,7 +1,7 @@
 const express = require("express");
 const sequelize = require("./database/sequelize");
-const Task = require("./database/models/task");
-const User = require("./database/models/user");
+const Task = require("./database/models/definitions/task");
+const User = require("./database/models/definitions/user");
 const cors = require("cors");
 const validatePassword = require("./Utils/validatePassword");
 const hashPassword = require("./Utils/hashPassword");
@@ -10,11 +10,11 @@ const generateToken = require("./Utils/generateToken");
 const app = express();
 app.use(cors()); // libera todas as origens
 app.use(express.json());
-const authenticateToken = require("./utils/authenticateToken")
-
+const authenticateToken = require("./utils/authenticateToken");
+const DeleteUserController = require("./controllers/users/delete-user-controller");
 // Importa os models antes do sync
-require("./database/models/task");
-require("./database/models/user");
+require("./database/models/definitions/task");
+require("./database/models/definitions/user");
 
 const PORT = process.env.PORT || 3000;
 
@@ -183,7 +183,7 @@ app.put("/users/:id", authenticateToken, async (req, res) => {
     }
 
     user.email = email;
-    
+
     const hashedPassword = await hashPassword(password);
     user.password = hashedPassword;
 
@@ -203,18 +203,21 @@ app.put("/users/:id", authenticateToken, async (req, res) => {
 });
 
 app.delete("/users/:id", authenticateToken, async (req, res) => {
-  try {
+  //try {
+    const deleteUserController = new DeleteUserController();
     const { id } = req.params;
-    const user = await User.findByPk(id);
-    if (!user) {
+    validateDelteUserInput(id);
+    deleteUserController.delete(req, res);
+    
+    /*const deletedUser = await deleteUserDb({ id });
+    if (!deletedUser) {
       return res.status(404).json({ message: "User not found" });
     }
-    await user.destroy();
     return res.status(204).send();
   } catch (error) {
     console.error("Erro ao deletar usuário", error);
     return res.status(500).json({ message: "Internal Server Error" });
-  }
+  }*/
 });
 
 //--------------------- TASKS-------------------
