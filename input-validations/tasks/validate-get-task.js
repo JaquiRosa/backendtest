@@ -1,4 +1,4 @@
-function validateDeleteTask(req, res, next) {
+function validateGetTask(req, res, next) {
   const { id } = req.params;
 
   if (!id) {
@@ -10,4 +10,4 @@ function validateDeleteTask(req, res, next) {
   next();
 }
 
-module.exports = validateDeleteTask;
+module.exports = validateGetTask;
