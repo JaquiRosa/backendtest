@@ -1,11 +1,12 @@
 const hashPassword = require("../../utils/hashPassword");
+const STATUS = require("../../constants/status");
 
 const {
   updateUserDb,
 } = require("../../database/models/funcionalidades/user-model-funcionalidades");
 
 class UpdateUserController {
-  async update(req, res) {
+  async update(req, res, next) {
     try {
       const { id } = req.params;
       const { email, password } = req.body;
@@ -19,23 +20,18 @@ class UpdateUserController {
       });
 
       if (!user) {
-        return res.status(404).json({
-          message: "User not found",
-        });
+        throw new AppError("User not found", STATUS.NOT_FOUND
+        );
       }
 
-      return res.status(200).json({
+      return res.status(STATUS.OK).json({
         id: user.id,
         email: user.email,
       });
     } catch (error) {
-      console.error("Error updating user:", error);
-
-      return res.status(500).json({
-        message: "Internal server error",
-      });
+      next(error);
+      }
     }
   }
-}
 
 module.exports = UpdateUserController;

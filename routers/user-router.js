@@ -1,6 +1,5 @@
-const {Router} = require("express");
+const { Router } = require("express");
 const router = Router();
-
 
 const validateLoginUser = require("../input-validations/user/validate-login-user");
 const validateCreateUser = require("../input-validations/user/validate-create-user");
@@ -24,7 +23,6 @@ const getUserByIdController = new GetUserByIdController();
 const updateUserController = new UpdateUserController();
 const deleteUserController = new DeleteUserController();
 
-
 router.post("/login", validateLoginUser, (req, res) => {
   return loginUserController.login(req, res);
 });
@@ -45,8 +43,13 @@ router.put("/users/:id", authenticateToken, validateUpdateUser, (req, res) => {
   return updateUserController.update(req, res);
 });
 
-router.delete("/users/:id", authenticateToken, validateDeleteUser, (req, res) => {
-  return deleteUserController.delete(req, res);
-});
+router.delete(
+  "/users/:id",
+  authenticateToken,
+  validateDeleteUser,
+  (req, res) => {
+    return deleteUserController.delete(req, res);
+  },
+);
 
 module.exports = router;

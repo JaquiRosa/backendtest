@@ -1,29 +1,26 @@
+const AppError = require("../../errors/app-error");
+const STATUS = require("../../constants/status");
+
 const {
   deleteUserDb,
 } = require("../../database/models/funcionalidades/user-model-funcionalidades");
 
 class DeleteUserController {
-  async delete(req, res) {
+  async delete(req, res, next) {
     try {
       const { id } = req.params;
 
       const deletedUser = await deleteUserDb({ id });
 
       if (!deletedUser) {
-        return res.status(404).json({
-          message: "User not found",
-        });
+        throw new AppError("User not found", STATUS.NOT_FOUND);
       }
 
-      return res.status(200).json({
+      return res.status(STATUS.OK).json({
         message: "User deleted successfully",
       });
     } catch (error) {
-      console.error("Error deleting user:", error);
-
-      return res.status(500).json({
-        message: "Internal server error",
-      });
+      next(error);
     }
   }
 }

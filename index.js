@@ -1,34 +1,8 @@
-const express = require("express");
-const cors = require("cors");
-
+require("./database/models");
+const app = require("./app");
 const sequelize = require("./database/sequelize");
 
-const userRouter = require("./routers/user-router");
-const taskRouter = require("./routers/task-router");
-
-// Importa os models antes do sync
-require("./database/models/definitions/task");
-require("./database/models/definitions/user");
-
-const app = express();
-
-app.use(cors());
-app.use(express.json());
-app.use(userRouter);
-app.use(taskRouter);
-
 const PORT = process.env.PORT || 3000;
-
-// -------------------------- HEALTHCHECK --------------------
-
-app.get("/healthcheck", (req, res) => {
-  return res.status(200).json({
-    status: "ok",
-    message: "Application is running",
-  });
-});
-
-// -------------------------- START SERVER --------------------
 
 async function startServer() {
   try {
