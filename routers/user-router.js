@@ -27,8 +27,8 @@ router.post("/login", validateLoginUser, (req, res) => {
   return loginUserController.login(req, res);
 });
 
-router.post("/users", validateCreateUser, (req, res) => {
-  return createUserController.create(req, res);
+router.post("/users", validateCreateUser, (req, res, next) => {
+  return createUserController.create(req, res, next);
 });
 
 router.get("/users", authenticateToken, (req, res) => {
