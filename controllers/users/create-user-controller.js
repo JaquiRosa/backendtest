@@ -26,8 +26,10 @@ class CreateUserController {
       return res.status(500).json({
         message: "Internal server error",
       });
+      // throw new Error("Error creating user", STATUS.INTERNAL_SERVER_ERROR);
     }
   }
 }
-
+ INTERNAL_SERVER_ERROR=500;
+ //MIDLEWARES QUE VAI INTERCEPTAR O ERRO E TRATAR ELE DE FORMA CENTRALIZADA, PARA EVITAR REPETIÇÃO DE CÓDIGOS DE TRATAMENTO DE ERROS EM CADA CONTROLLER.
 module.exports = CreateUserController;
